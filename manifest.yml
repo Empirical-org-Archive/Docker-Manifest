@@ -1,0 +1,44 @@
+containers:
+  swf:
+    host: dev.swf.empirical.org
+    image: swf_image
+  postgres_compass:
+    image: hstore
+    keep: true
+  postgres_quill:
+    image: hstore
+    keep: true
+  compass:
+    host: www.compass.empirical.org
+    image: compass_image
+    links:
+      postgres_compass: pg
+    env:
+      APP_SECRET: not-exactly-secret
+    volumes:
+      "/root/Compass-Module-Environment/Compass": "/app"
+  compass_api:
+    host: api.compass.empirical.org
+    image: compass_image
+    links:
+      postgres_compass: pg
+    env:
+      APP_SECRET: not-exactly-secret
+    volumes:
+      "/root/Compass-Module-Environment/Compass-API": "/app"
+  quill:
+    host: quill.compass.empirical.org
+    image: compass_image
+    links:
+      postgres_quill: pg
+    env:
+      QUILL_API_URL: http://api.compass.empirical.org/
+      QUILL_SITE_URL: http://www.compass.empirical.org/
+      QUILL_CLIENT_ID: quill-lessons
+      QUILL_CLIENT_SECRET: not-a-secret
+    volumes:
+      "/root/Compass-Module-Environment/Quill-Lessons": "/app"
+
+images:
+  compass_image:
+    path: /root/Compass-Module-Environment/Compass
