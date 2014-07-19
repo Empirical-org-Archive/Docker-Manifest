@@ -26,6 +26,10 @@ class Manifest
     @manifest.deep_symbolize_keys!
   end
 
+  def repositories
+    manifest[:repositories]
+  end
+
   def format_links links
     links ||= []
     links.map do |name, val|

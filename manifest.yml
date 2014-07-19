@@ -3,12 +3,14 @@ docker-001:
     swf:
       host: dev.swf.empirical.org
       image: swf_image
+
     postgres_compass:
-      image: hstore
+      image: empirical/hstore
       keep: true
     postgres_quill:
-      image: hstore
+      image: empirical/hstore
       keep: true
+
     compass:
       host: www.compass.empirical.org
       image: compass_image
@@ -42,6 +44,20 @@ docker-001:
 
   images:
     compass_image:
-      path: /root/Compass-Module-Environment/Compass
-    hstore:
-      path: /root/Compass-Module-Environment/images/hstore
+      path: /root/Compass
+    compass_api_image:
+      path: /root/Compass-API
+    quill_image:
+      path: /root/Quill-Lessons
+    swf_image:
+      path: /root/Stories-With-Friends
+
+  repositories:
+    "/root/Compass":
+      url: https://github.com/empirical-org/Compass.git
+    "/root/Compass-API":
+      url: https://github.com/empirical-org/Compass-API.git
+    "/root/Quill-Lessons":
+      url: https://github.com/empirical-org/Quill-Lessons.git
+    "/root/Stories-With-Friends":
+      url: https://github.com/empirical-org/Stories-With-Friends.git
