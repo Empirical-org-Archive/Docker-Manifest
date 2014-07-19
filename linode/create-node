@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+gem 'bundler'
+require 'bundler'
+Bundler.require
+
+require 'pry'
+
+linode = Linode.new(api_key: ENV['LINODE_API_KEY'])
+
+planid = 1 # $10/mo
+datacenterid = 2 # dallas, TX
+stackscriptid = 9727 # Docker node
+distributionid = 124 # Ubuntu 14.04 LTS
+disk_size = 24064 # allows 512MB scratch
+rootpass = 'Docker1' # secure!
+rootsshkey = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8UGzJFhxkhpbJ+1wnk0ExqYp8GcqxBLxhgepmMoD0HKkyOEYnoX5l8vjtBvR4WWi5GapEZqr7BbaygYK489bTpB9aL1He4rMbCh0itnmZUHfDbpiCAACu1Z/ue2R8cxNC7Q+lwH8ei+eeubw94ms/8QDV5iwGNLbiIhKa90bs8e3gJXz4jOSvRZn3m8mIkoB72STSVY1fqpqpune1MhL4PdGCzCBP/Jl0QWpxlFP0apkZnOKrw9o/icovPFooRMVEvqgowjdinEUq/YzMB1H/Av5X9Yawky9vGsIb7p8JKBOHuJ1MQRpzQOiKDtjhwYggkiLDmTfhKLenIAASzZ7j empirical-linode.pub'
+kernelid = linode.avail.kernels.find{|kernel| kernel.label =~ /Latest 64/}.kernelid
+
+stack_script_options = {
+  'NODE_NAME' => 'docker-001'
+}.to_json
+
+
+node = linode.linode.create(datacenterid: datacenterid, planid: planid)
+
+linodeid = node.linodeid
+
+disk = linode.linode.disk.createfromstackscript \
+  linodeid: linodeid,
+  stackscriptid: stackscriptid,
+  stackscriptudfresponses: stack_script_options,
+  distributionid: distributionid,
+  label: 'docker-disk',
+  size: disk_size,
+  rootpass: rootpass,
+  rootsshkey: rootsshkey
+
+swap = linode.linode.disk.create \
+  linodeid: linodeid,
+  label: 'Swap',
+  type: 'swap',
+  size: 512
+
+config = linode.linode.config.create \
+  linodeid: linodeid,
+  kernelid: kernelid,
+  label: 'Latest Linux Kernal Config',
+  disklist: [disk.diskid, swap.diskid].join(','),
+  rootdevicenum: 1
+
+configid = config.configid
+
+linode.linode.reboot \
+  linodeid: linodeid,
+  configid: configid
+
+puts linode.linode.ip.list(linodeid: linodeid).first.ipaddress

@@ -1,5 +1,6 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem 'docker-api', require: 'docker'
 gem 'pry', require: false
 gem 'activesupport', require: 'active_support/core_ext'
+
+gem 'docker-api', require: 'docker'
