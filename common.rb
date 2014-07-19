@@ -15,7 +15,14 @@ class Manifest
   # formatters
   def manifest
     return @manifest if defined?(@manifest)
-    @manifest = YAML.load(File.read('manifest.yml'))
+
+    data = if ENV['MANIFEST_URL']
+      open(ENV['MANIFEST_URL'])
+    else
+      File.read('manifest.yml')
+    end
+
+    @manifest = YAML.load(data)[ENV['NODE_NAME']]
     @manifest.deep_symbolize_keys!
   end
 
