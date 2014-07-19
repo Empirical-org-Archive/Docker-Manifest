@@ -1,5 +1,18 @@
 #!/usr/bin/env ruby
 
-require './common'
+require '../../lib/manifest'
 
-Manifest.new.run
+manifest = Manifest.new
+
+args = ARGV.dup
+name = args.shift
+run_name = "#{name}_run_001"
+spec = manifest[:containers][name.to_sym]
+
+container = manifest.create run_name, spec, \
+  'Cmd' => args
+
+manifest.start container
+
+container.attach { |stream, chunk| puts chunk }
+container.delete

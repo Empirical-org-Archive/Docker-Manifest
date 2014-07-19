@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require '../../lib/manifest'
+
+manifest = Manifest.new
+
+repos = Repositories.new(manifest)
+
+binding.pry

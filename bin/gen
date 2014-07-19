@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 
-require './common'
+require '../../lib/manifest'
 
-Manifest.new.gen
+manifest = Manifest.new
+
+manifest[:containers].each do |name, spec|
+  name = name.to_s
+  next if manifest.remove_old(name, spec) == :exists
+  container = manifest.create name, spec
+  manifest.start container, spec
+end
