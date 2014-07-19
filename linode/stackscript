@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# This block defines the variables the user of the script needs to input
+# when deploying using this script.
+#
+# <UDF name="node_name" label="The node name for the new Linode.">
+# NODE_NAME=
+
+# save the node name
+echo $NODE_NAME > /etc/nodename
+
+# add apt https
+[ -e /usr/lib/apt/methods/https ] || {
+  apt-get update
+  apt-get install apt-transport-https
+}
+
+# docker repo
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+
+# install docker
+sudo sh -c "echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list"
+sudo apt-get update
+sudo apt-get install -y lxc-docker
+
+# start the router (VHOST)
+docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock -t --name router jwilder/nginx-proxy
+
+# start the config run
+
+docker run --rm -e MANIFEST_URL=https://raw.githubusercontent.com/empirical-org/docker-manifest/master/manifest.yml empirical/manifest
