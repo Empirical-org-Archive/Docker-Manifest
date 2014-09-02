@@ -1,3 +1,7 @@
+# Docker Documentation 
+Quinn and Matt had an hour long chat about the state of our Docker file. This is a great starting point for what is going on. [Click here to access notes.](https://docs.google.com/a/quill.org/document/d/1Y--6RnmT_UW_SC7m4uSmggz72hcb5nUUAEqqhbDH-k4/edit)
+
+
 # Welcome to Docker Manifest!
 
 - **Getting Started:** [Start here with this doc.](https://github.com/empirical-org/Documentation/tree/master/Getting-Started) 
